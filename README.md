@@ -2,6 +2,8 @@
 
 This is a simple, interactive Tic-Tac-Toe game built using HTML, CSS, and JavaScript. It includes the option to play against a computer or against another player. The game highlights the winning combination and allows you to restart the game.
 
+Hosted on Vercel: https://tictactoe-mauve-mu.vercel.app/
+
 ## Features
 
 - **Play Against Computer**: Check the option to play against the AI.
