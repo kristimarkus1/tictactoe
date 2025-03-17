@@ -1,98 +1,118 @@
-const cells = document.querySelectorAll('[data-cell]');
-const board = document.querySelector('.board');
-const restartButton = document.querySelector('.restart');
-const message = document.getElementById('message');
+const board = document.getElementById('game-board');
+const restartBtn = document.getElementById('restart-btn');
+const resultDisplay = document.getElementById('game-result');
 const aiToggle = document.getElementById('ai-toggle');
 let currentPlayer = 'X';
-let gameOver = false;
-let aiEnabled = false;
 let gameBoard = ['', '', '', '', '', '', '', '', ''];
-let winningCombination = [];
+let isGameActive = true;
 
-function checkWinner() {
-  const winPatterns = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6]
-  ];
-
-  for (const pattern of winPatterns) {
-    const [a, b, c] = pattern;
-    if (gameBoard[a] && gameBoard[a] === gameBoard[b] && gameBoard[a] === gameBoard[c]) {
-      message.textContent = `${currentPlayer} wins!`;
-      gameOver = true;
-      winningCombination = [a, b, c];
-      highlightWinner();
-      return;
-    }
-  }
-
-  if (gameBoard.every(cell => cell)) {
-    message.textContent = 'It\'s a tie!';
-    gameOver = true;
-  }
+// Create game board dynamically
+function createBoard() {
+    board.innerHTML = '';
+    gameBoard.forEach((cell, index) => {
+        const square = document.createElement('div');
+        square.classList.add('square');
+        square.setAttribute('data-index', index);
+        square.addEventListener('click', handleSquareClick);
+        board.appendChild(square);
+    });
 }
 
-function highlightWinner() {
-  winningCombination.forEach(index => {
-    cells[index].classList.add('winner-line');
-  });
-}
+// Handle a square click
+function handleSquareClick(e) {
+    const index = e.target.getAttribute('data-index');
+    if (gameBoard[index] !== '' || !isGameActive || currentPlayer === 'O' && aiToggle.checked) return;
 
-function handleCellClick(event) {
-  if (gameOver) return;
-  const cell = event.target;
-  const index = Array.from(cells).indexOf(cell);
-
-  if (!gameBoard[index]) {
     gameBoard[index] = currentPlayer;
-    cell.textContent = currentPlayer;
-    checkWinner();
-    currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-    
-    if (!gameOver && aiEnabled && currentPlayer === 'O') {
-      aiMove();
+    e.target.textContent = currentPlayer;
+
+    if (checkWinner()) {
+        isGameActive = false;
+        resultDisplay.textContent = `${currentPlayer} wins!`;
+        highlightWinningCells();
+    } else if (!gameBoard.includes('')) {
+        resultDisplay.textContent = 'It\'s a draw!';
+    } else {
+        currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+        if (currentPlayer === 'O' && aiToggle.checked) {
+            setTimeout(computerMove, 500); // Let computer play after a short delay
+        }
     }
-  }
 }
 
-function aiMove() {
-  const emptyCells = gameBoard
-    .map((cell, index) => (cell === '' ? index : null))
-    .filter(index => index !== null);
+// Check for a winner
+function checkWinner() {
+    const winPatterns = [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+        [0, 4, 8],
+        [2, 4, 6],
+    ];
 
-  const randomIndex = emptyCells[Math.floor(Math.random() * emptyCells.length)];
-  gameBoard[randomIndex] = 'O';
-  cells[randomIndex].textContent = 'O';
-  checkWinner();
-  currentPlayer = 'X';
+    return winPatterns.some(pattern => {
+        const [a, b, c] = pattern;
+        if (gameBoard[a] === gameBoard[b] && gameBoard[b] === gameBoard[c] && gameBoard[a] !== '') {
+            return pattern;
+        }
+        return false;
+    });
 }
 
-function restartGame() {
-  cells.forEach(cell => {
-    cell.textContent = '';
-  });
-  gameBoard = ['', '', '', '', '', '', '', '', ''];
-  currentPlayer = 'X';
-  gameOver = false;
-  message.textContent = '';
-  winningCombination = [];
-  cells.forEach(cell => cell.classList.remove('winner-line'));
+// Highlight the winning cells
+function highlightWinningCells() {
+    const winPatterns = [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+        [0, 4, 8],
+        [2, 4, 6],
+    ];
+
+    const winningPattern = winPatterns.find(pattern => {
+        const [a, b, c] = pattern;
+        return gameBoard[a] === gameBoard[b] && gameBoard[b] === gameBoard[c] && gameBoard[a] !== '';
+    });
+
+    if (winningPattern) {
+        const [a, b, c] = winningPattern;
+        document.querySelectorAll('.square')[a].classList.add('winner');
+        document.querySelectorAll('.square')[b].classList.add('winner');
+        document.querySelectorAll('.square')[c].classList.add('winner');
+    }
 }
 
-function toggleAi() {
-  aiEnabled = aiToggle.checked;
-  restartGame();
+// Computer move logic
+function computerMove() {
+    const availableSpots = gameBoard.map((cell, index) => (cell === '' ? index : null)).filter(val => val !== null);
+    const randomIndex = availableSpots[Math.floor(Math.random() * availableSpots.length)];
+    gameBoard[randomIndex] = 'O';
+    document.querySelectorAll('.square')[randomIndex].textContent = 'O';
+
+    if (checkWinner()) {
+        isGameActive = false;
+        resultDisplay.textContent = 'O wins!';
+        highlightWinningCells();
+    } else if (!gameBoard.includes('')) {
+        resultDisplay.textContent = 'It\'s a draw!';
+    } else {
+        currentPlayer = 'X';
+    }
 }
 
-cells.forEach(cell => {
-  cell.addEventListener('click', handleCellClick);
+// Restart the game
+restartBtn.addEventListener('click', () => {
+    currentPlayer = 'X';
+    gameBoard = ['', '', '', '', '', '', '', '', ''];
+    isGameActive = true;
+    resultDisplay.textContent = '';
+    createBoard();
 });
 
-restartButton.addEventListener('click', restartGame);
-aiToggle.addEventListener('change', toggleAi);
+createBoard();

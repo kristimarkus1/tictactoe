@@ -1,68 +1,193 @@
+/* Basic reset */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: 'Orbitron', sans-serif;
 }
 
+/* Body */
 body {
-  font-family: 'Arial', sans-serif;
-  background-color: #f8f8f8;
+  background-color: #f3f4f6;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  flex-direction: column;
+  min-height: 100vh;
+  color: #333;
 }
 
-.container {
+/* Main game container */
+.game-container {
   text-align: center;
+  background-color: #ffffff;
+  border-radius: 10px;
+  padding: 30px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  width: 90%;
   max-width: 400px;
-  margin: 10px;
 }
 
+/* Title */
+.game-title {
+  font-size: 36px;
+  font-weight: bold;
+  color: #ff6347;
+  margin-bottom: 20px;
+}
+
+/* Game Board */
 .board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 10px;
+  margin-bottom: 20px;
+}
+
+/* Individual squares */
+.board div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100px;
+  height: 100px;
+  background-color: #f4f4f4;
+  font-size: 36px;
+  font-weight: bold;
+  border: 2px solid #333;
+  cursor: pointer;
+  border-radius: 10px;
+  transition: background-color 0.3s ease;
+}
+
+/* Hover effect */
+.board div:hover {
+  background-color: #ffeb3b;
+}
+
+/* Winner effect */
+.winner {
+  background-color: #4caf50 !important;
+  color: white;
+}
+
+/* Controls */
+.controls {
+  margin-top: 20px;
+}
+
+.btn {
+  background-color: #ff6347;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-bottom: 10px;
+}
+
+.btn:hover {
+  background-color: #ff4500;
+}
+
+/* Result text */
+.result {
+  font-size: 18px;
+  margin-top: 20px;
+  font-weight: bold;
+  color: #ff6347;
+}
+
+/* Checkbox styling */
+.checkbox-container {
+  margin-top: 20px;
+  text-align: left;
+}
+
+.checkbox {
+  transform: scale(1.5);
+}
+
+/* Animation for showing the winner */
+@keyframes winner-animation {
+  0% {
+      background-color: #ffeb3b;
+  }
+  50% {
+      background-color: #4caf50;
+  }
+  100% {
+      background-color: #ff6347;
+  }
+}
+
+/* Adding smooth animation to the board */
+.board div {
+  animation: winner-animation 1s ease-out;
+}
+
+
+/* Styles for Tic-Tac-Toe */
+#game-container {
+  font-family: 'Arial', sans-serif;
+  text-align: center;
+}
+
+h1 {
+  font-size: 30px;
+  font-weight: bold;
+  color: #FF5733;  /* Orange color */
+  margin-bottom: 20px;
+}
+
+/* Restart button */
+button {
+  background-color: #FF5733; /* Orange button */
+  color: white;
+  font-size: 16px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #FF4510; /* Darker shade on hover */
+}
+
+/* Game Board styling */
+#game-board {
   display: grid;
   grid-template-columns: repeat(3, 100px);
   grid-template-rows: repeat(3, 100px);
-  gap: 5px;
+  gap: 10px;
+  margin-bottom: 20px;
 }
 
-.cell {
+.square {
   width: 100px;
   height: 100px;
-  background-color: #fff;
-  border: 2px solid #000;
-  font-size: 36px;
+  border: 2px solid black;
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+  font-size: 2em;
+  font-weight: bold;
   cursor: pointer;
+  background-color: #f9f9f9;
+  transition: background-color 0.3s ease;
 }
 
-.winner-line {
-  background-color: rgba(0, 255, 0, 0.5);
+.square:hover {
+  background-color: #e8e8e8;
 }
 
-.restart {
-  margin-top: 20px;
-  padding: 10px 20px;
+/* Styles for the checkbox */
+label {
   font-size: 16px;
-  cursor: pointer;
+  margin-left: 10px;
+  color: #333;
 }
 
-.message {
-  margin-top: 20px;
-  font-size: 18px;
-}
-
-button:focus {
-  outline: none;
-}
-
-button:disabled {
-  cursor: not-allowed;
-}
-
-input {
-  margin-top: 10px;
-}
